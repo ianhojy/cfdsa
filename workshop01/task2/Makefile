@@ -1,0 +1,37 @@
+.PHONY: create-network run-db run-app stop-containers all
+
+NETWORK_NAME=mynet
+VOLUME_NAME=northwind_db_volume
+DB_CONTAINER_NAME=mydb
+APP_CONTAINER_NAME=myapp
+DB_IMAGE=stackupiss/northwind-db:v1
+APP_IMAGE=stackupiss/northwind-app:v1
+
+create-network:
+	-docker network create -d bridge $(NETWORK_NAME)
+
+run-db:
+	docker run -d \
+		--network $(NETWORK_NAME) \
+		--name $(DB_CONTAINER_NAME) \
+		-e MYSQL_ROOT_PASSWORD=changeit \
+		-v $(VOLUME_NAME):/var/lib/mysql \
+		$(DB_IMAGE)
+
+run-app:
+	docker run -d \
+		--network $(NETWORK_NAME) \
+		--name $(APP_CONTAINER_NAME) \
+		-p 8080:3000 \
+		-e DB_HOST=$(DB_CONTAINER_NAME) \
+		-e DB_USER=root \
+		-e DB_PASSWORD=changeit \
+		$(APP_IMAGE)
+
+stop-containers:
+	-docker stop $(APP_CONTAINER_NAME) $(DB_CONTAINER_NAME)
+	-docker rm $(APP_CONTAINER_NAME) $(DB_CONTAINER_NAME)
+	-docker network rm $(NETWORK_NAME)
+	-docker volume rm $(VOLUME_NAME)
+
+all: create-network run-db run-app

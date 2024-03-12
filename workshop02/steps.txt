@@ -3,3 +3,4 @@ kubectl apply -f bgg-database.yaml
 kubectl apply -f config.yaml
 kubectl apply -f bgg-app.yaml
 kubectl port-forward -n bggns svc/bgg-app-service 8080:3000
+

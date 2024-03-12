@@ -1,0 +1,79 @@
+kubectl get namespace
+kubectl get ns
+kubectl describe namespace default
+kubectl get pod -n kube-system
+
+kubectl create ns myns
+kubectl delete ns/myns
+
+kubectl create -f dov-bear.yaml
+kubectl describe po/dov-po -n myns
+kubectl logs -n myns po/dov-po
+
+kubectl delete -n myns po/dov-po
+kubectl delete -f dov-bear.yaml
+kubectl delete -f dov-bear.yaml --force --grace-period=0
+# delete immediately
+
+kubectl apply -f dov-bear.yaml
+# create is imperative, if run multiple times, resource there -> error
+# apply will compare existing resource and what is changed
+
+# to test, tunnel into the pod
+# external port -> container port
+kubectl port-forward -n myns po/dov-po 8080:3000
+# to see logs
+kubectl logs -n myns -f po/dov-po
+
+kubectl exec -ti n myns po/dov-po -- <command you want to run>
+
+# you must define the health endpoint yourself (for e.g. /healthz)
+
+# is generally recommended you don't deploy ports directly
+# better to deploy together with Deployment
+# deployment provides security for the pod
+# and create replica of the pod
+
+# replicas of what? use the template
+# template is basically a pod spec
+kubectl apply -f dov-deploy.yaml
+
+kubectl get all
+ -n myns
+
+kubectl get deploy,po -n myns
+# then try to kill
+
+kubectl delete -n myns pod/dov-deploy-5c4986b78c-rcx8k --force --grace-period=0
+
+kubectl port-forward -n myns deploy/dov-deploy 8080:3000 8100:3100
+kubectl port-forward -n myns deploy/dov-deploy 8100:3100
+# then go to localhost:8100/metrics
+
+# scaling
+kubectl scale deploy/dov-deploy -n myns --replicas=5
+
+kubectl get all --show-labels -n myns
+
+kubectl apply -f config.yaml
+
+kubectl apply -f dov-deploy.yaml
+
+# to check
+kubectl describe -n myns svc/dov-svc
+
+kubectl run test -ti --rm --image=nicolaka/netshoot -- /bin/sh
+
+# can access at <service_name>.<namespace>.svc.cluster.local
+
+nslookup dov-svc.myns.svc.cluster.local
+
+# portforward to service
+kubectl port-forward -n myns svc/dov-svc 8080:5000 8180:5100
+
+# if use nodeport then can expose
+# go to digital ocean, droplets, get ip address and then look at the service port 3000:30598 and then <ip>:30598
+# the problem is that this exposes your topology
+# we can do loadbalancer instead
+# kubernetes has integration with cloud provider platform
+# on digital ocean it will provision loadbalancer under 'networking'

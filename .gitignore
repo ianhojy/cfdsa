@@ -3,3 +3,4 @@ dist
 angular
 .angulardoc.json
 .DS_Store
+cfdsa-kubeconfig.yaml

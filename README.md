@@ -1,5 +1,9 @@
 # CFDSA - Container for Deployment and Scaling Apps
 
+## Note to Self
+- On digitalocean, donwload the config file, create `~/.kube` and put it inside, rename to `config` 
+- 
+
 ## Installing Metrics Server
 
 ### Copy the metrics-server deployment

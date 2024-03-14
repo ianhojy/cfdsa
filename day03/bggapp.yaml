@@ -2,60 +2,51 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: bgg-app-deployment
+  name: bggapp-deploy
   namespace: bggns
   labels:
     app: bgg
-    name: bgg-app-deployment
+    name: bggapp-deploy
 spec:
   replicas: 3
-  minReadySeconds: 5
-  strategy:
-    type: RollingUpdate
-    rollingUpdate:
-      maxSurge: 1
-      maxUnavailable: 0
   selector:
     matchLabels:
       app: bgg
-      name: bgg-app-pod
+      name: bggapp-po
   template:
     metadata:
-      name: bgg-app-pod
+      name: bggapp-po
       labels:
         app: bgg
-        name: bgg-app-pod
+        name: bggapp-po
     spec:
       containers:
-      - name: bgg-app-container
+      - name: bggapp-container
         image: stackupiss/bgg-backend:v1
         imagePullPolicy: IfNotPresent
         envFrom:
         - configMapRef:
-            name: bgg-config
+            name: bgg-cm
         - secretRef:
             name: bgg-secret
         ports:
-        - name: bgg-app-port
+        - name: bggapp-port
           containerPort: 3000
-
-
 ---
 apiVersion: v1
 kind: Service
 metadata:
-  name: bgg-app-service
+  name: bggapp-svc
   namespace: bggns
   labels:
     app: bgg
-    name: bgg-app-service
+    name: bggapp-svc
 spec:
   type: ClusterIP
-  # type: NodePort
-  # type: LoadBalancer
   selector:
     app: bgg
-    name: bgg-app-pod
+    name: bggapp-po
   ports:
   - port: 3000
-    targetPort: bgg-app-port
+    targetPort: bggapp-port
+

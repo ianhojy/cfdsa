@@ -77,3 +77,23 @@ kubectl port-forward -n myns svc/dov-svc 8080:5000 8180:5100
 # we can do loadbalancer instead
 # kubernetes has integration with cloud provider platform
 # on digital ocean it will provision loadbalancer under 'networking'
+
+kubectl get sc
+
+# use retain
+
+kubectl get all,pvc,pv -nbggns
+
+
+helm repo add ingress-nginx https://kubernetes.github.io/ingress-nginx
+helm repo update
+helm install ingress-nginx ingress-nginx/ingress-nginx -ningress-nginx --create-namespace
+
+# ingress
+kubectl get all -ningress-nginx
+
+kubectl get ingressclass
+
+kubectl get all,ing -nmyns 
+
+kubectl get ing -nmyns
